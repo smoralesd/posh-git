@@ -84,7 +84,6 @@ $global:GitPromptSettings = New-Object PSObject -Property @{
     AutoRefreshIndex                            = $true
 
     EnablePromptStatus                          = !$Global:GitMissing
-    EnableFileStatus                            = $true
     RepositoriesInWhichToDisableFileStatus      = @( ) # Array of repository paths
     DescribeStyle                               = ''
 
@@ -170,16 +169,18 @@ function Write-GitStatus($status) {
             Write-Prompt  (" {0}" -f $branchStatusSymbol) -BackgroundColor $branchStatusBackgroundColor -ForegroundColor $branchStatusForegroundColor
         }
 
-        if($s.EnableFileStatus -and $status.HasIndex) {
+        if ($status.HasIndex) {
             Write-Prompt $s.BeforeIndexText -BackgroundColor $s.BeforeIndexBackgroundColor -ForegroundColor $s.BeforeIndexForegroundColor
 
-            if($s.ShowStatusWhenZero -or $status.Index.Added) {
+            if ($s.ShowStatusWhenZero -or $status.Index.Added) {
                 Write-Prompt (" $($s.FileAddedText)$($status.Index.Added.Count)") -BackgroundColor $s.IndexBackgroundColor -ForegroundColor $s.IndexForegroundColor
             }
-            if($s.ShowStatusWhenZero -or $status.Index.Modified) {
+
+            if ($s.ShowStatusWhenZero -or $status.Index.Modified) {
                 Write-Prompt (" $($s.FileModifiedText)$($status.Index.Modified.Count)") -BackgroundColor $s.IndexBackgroundColor -ForegroundColor $s.IndexForegroundColor
             }
-            if($s.ShowStatusWhenZero -or $status.Index.Deleted) {
+
+            if ($s.ShowStatusWhenZero -or $status.Index.Deleted) {
                 Write-Prompt (" $($s.FileRemovedText)$($status.Index.Deleted.Count)") -BackgroundColor $s.IndexBackgroundColor -ForegroundColor $s.IndexForegroundColor
             }
 
@@ -187,19 +188,21 @@ function Write-GitStatus($status) {
                 Write-Prompt (" $($s.FileConflictedText)$($status.Index.Unmerged.Count)") -BackgroundColor $s.IndexBackgroundColor -ForegroundColor $s.IndexForegroundColor
             }
 
-            if($status.HasWorking) {
+            if ($status.HasWorking) {
                 Write-Prompt $s.DelimText -BackgroundColor $s.DelimBackgroundColor -ForegroundColor $s.DelimForegroundColor
             }
         }
 
-        if($s.EnableFileStatus -and $status.HasWorking) {
-            if($s.ShowStatusWhenZero -or $status.Working.Added) {
+        if ($status.HasWorking) {
+            if ($s.ShowStatusWhenZero -or $status.Working.Added) {
                 Write-Prompt (" $($s.FileAddedText)$($status.Working.Added.Count)") -BackgroundColor $s.WorkingBackgroundColor -ForegroundColor $s.WorkingForegroundColor
             }
-            if($s.ShowStatusWhenZero -or $status.Working.Modified) {
+
+            if ($s.ShowStatusWhenZero -or $status.Working.Modified) {
                 Write-Prompt (" $($s.FileModifiedText)$($status.Working.Modified.Count)") -BackgroundColor $s.WorkingBackgroundColor -ForegroundColor $s.WorkingForegroundColor
             }
-            if($s.ShowStatusWhenZero -or $status.Working.Deleted) {
+
+            if ($s.ShowStatusWhenZero -or $status.Working.Deleted) {
                 Write-Prompt (" $($s.FileRemovedText)$($status.Working.Deleted.Count)") -BackgroundColor $s.WorkingBackgroundColor -ForegroundColor $s.WorkingForegroundColor
             }
 

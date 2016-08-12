@@ -117,7 +117,7 @@ function Get-GitStatus($gitDir = (Get-GitDirectory)) {
         $filesUnmerged = @()
         $stashCount = 0
 
-        if($settings.EnableFileStatus -and !$(InDisabledRepository)) {
+        if(!$(InDisabledRepository)) {
             dbg 'Getting status' $sw
             $status = git -c color.status=false status --short --branch 2>$null
             if($settings.EnableStashStatus) {
