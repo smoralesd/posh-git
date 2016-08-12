@@ -4,7 +4,7 @@
 $global:GitPromptSettings = New-Object PSObject -Property @{
     DefaultForegroundColor                      = $Host.UI.RawUI.ForegroundColor
 
-    BeforeText                                  = ' ['
+    BeforeText                                  = ' ('
     BeforeForegroundColor                       = [ConsoleColor]::Yellow
     BeforeBackgroundColor                       = $Host.UI.RawUI.BackgroundColor
 
@@ -12,7 +12,7 @@ $global:GitPromptSettings = New-Object PSObject -Property @{
     DelimForegroundColor                        = [ConsoleColor]::Yellow
     DelimBackgroundColor                        = $Host.UI.RawUI.BackgroundColor
 
-    AfterText                                   = ']'
+    AfterText                                   = ')'
     AfterForegroundColor                        = [ConsoleColor]::Yellow
     AfterBackgroundColor                        = $Host.UI.RawUI.BackgroundColor
 
@@ -39,7 +39,8 @@ $global:GitPromptSettings = New-Object PSObject -Property @{
     BranchForegroundColor                       = [ConsoleColor]::Cyan
     BranchBackgroundColor                       = $Host.UI.RawUI.BackgroundColor
 
-    BranchIdenticalStatusToSymbol               = [char]0x2261 # Three horizontal lines
+    # BranchIdenticalStatusToSymbol               = [char]0x2261 # Three horizontal lines
+    BranchIdenticalStatusToSymbol               = $null
     BranchIdenticalStatusToForegroundColor      = [ConsoleColor]::Cyan
     BranchIdenticalStatusToBackgroundColor      = $Host.UI.RawUI.BackgroundColor
 
@@ -143,16 +144,19 @@ function Write-GitStatus($status) {
         } elseif ($status.BehindBy -ge 1 -and $status.AheadBy -ge 1) {
             # We are both behind and ahead of remote
             $branchStatusSymbol          = $s.BranchBehindAndAheadStatusSymbol
+            $branchStatusSymbol          = "{0}{1}{2}{3}" -f $s.BranchBehindStatusSymbol, $status.BehindBy, $s.BranchAheadStatusSymbol, $status.AheadBy
             $branchStatusBackgroundColor = $s.BranchBehindAndAheadStatusBackgroundColor
             $branchStatusForegroundColor = $s.BranchBehindAndAheadStatusForegroundColor
         } elseif ($status.BehindBy -ge 1) {
             # We are behind remote
             $branchStatusSymbol          = $s.BranchBehindStatusSymbol
+            $branchStatusSymbol          = "{0}{1}" -f $s.BranchBehindStatusSymbol, $status.BehindBy
             $branchStatusBackgroundColor = $s.BranchBehindStatusBackgroundColor
             $branchStatusForegroundColor = $s.BranchBehindStatusForegroundColor
         } elseif ($status.AheadBy -ge 1) {
             # We are ahead of remote
             $branchStatusSymbol          = $s.BranchAheadStatusSymbol
+            $branchStatusSymbol          = "{0}{1}" -f $s.BranchAheadStatusSymbol, $status.AheadBy
             $branchStatusBackgroundColor = $s.BranchAheadStatusBackgroundColor
             $branchStatusForegroundColor = $s.BranchAheadStatusForegroundColor
         } else {
@@ -252,14 +256,14 @@ if(!(Test-Path Variable:Global:VcsPromptStatuses)) {
 $s = $global:GitPromptSettings
 
 # Override some of the normal colors if the background color is set to the default DarkMagenta.
-if ($Host.UI.RawUI.BackgroundColor -eq [ConsoleColor]::DarkMagenta) { 
+if ($Host.UI.RawUI.BackgroundColor -eq [ConsoleColor]::DarkMagenta) {
     $s.LocalDefaultStatusForegroundColor    = $s.LocalDefaultStatusForegroundBrightColor
     $s.LocalWorkingStatusForegroundColor    = $s.LocalWorkingStatusForegroundBrightColor
 
-    $s.BeforeIndexForegroundColor           = $s.BeforeIndexForegroundBrightColor 
-    $s.IndexForegroundColor                 = $s.IndexForegroundBrightColor 
+    $s.BeforeIndexForegroundColor           = $s.BeforeIndexForegroundBrightColor
+    $s.IndexForegroundColor                 = $s.IndexForegroundBrightColor
 
-    $s.WorkingForegroundColor               = $s.WorkingForegroundBrightColor 
+    $s.WorkingForegroundColor               = $s.WorkingForegroundBrightColor
 }
 
 function Global:Write-VcsStatus { $Global:VcsPromptStatuses | foreach { & $_ } }
